@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anketa - Drugi Krug Izbora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: left;
+            margin: 20px;
+        }
+        h1 {
+            margin-left: 20%;
+        }
+        .poll-container {
+            margin: 20px auto;
+            max-width: 400px;
+            margin-left: 20%;
+            padding: 20px;
+            border: 5px solid #4CAF50;
+            border-radius: 15px;
+            background: linear-gradient(to bottom, #e8f5e9, #a5d6a7);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .result-bar {
+            height: 20px;
+            background-color: #4CAF50;
+            text-align: right;
+            color: white;
+            line-height: 20px;
+            padding-right: 5px;
+            margin-bottom: 10px;
+            transition: width 0.5s ease;
+        }
+        .hidden {
+            display: none;
+        }
+        .vote-buttons button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(to right, #4CAF50, #81C784);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: left;
+        }
+        .vote-buttons button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .facebook-share {
+            margin-top: 20px;
+            margin-left: 20%;
+        }
+        .facebook-share button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(to right, #3b5998, #8b9dc3);
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .facebook-share button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .candidate {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .candidate img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Za koga biste glasali u drugom krugu izbora?</h1>
+
+    <div class="poll-container">
+        <div id="poll-vote">
+            <div class="vote-buttons">
+                <div class="candidate">
+                    <img src="Milanovic.jpg" alt="Zoran Milanović">
+                    <button onclick="vote('Milanovic')">Zoran Milanović</button>
+                </div>
+                <div class="candidate">
+                    <img src="Primorac.jpg" alt="Dragan Primorac">
+                    <button onclick="vote('Primorac')">Dragan Primorac</button>
+                </div>
+                <div class="candidate">
+                    <img src="coffee.png" alt="Neću glasati!">
+                    <button onclick="vote('Nisam')">Neću glasati!</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="poll-result" class="hidden">
+            <h2>Rezultati:</h2>
+            <div id="result-Primorac">
+                Dragan Primorac: <span id="count-Primorac">0</span> glasova (<span id="percent-Primorac">0</span>%)
+                <div class="result-bar" id="bar-Primorac" style="width: 0%;"></div>
+            </div>
+            <div id="result-Milanovic">
+                Zoran Milanović: <span id="count-Milanovic">0</span> glasova (<span id="percent-Milanovic">0</span>%)
+                <div class="result-bar" id="bar-Milanovic" style="width: 0%;"></div>
+            </div>
+            <div id="result-Nisam">
+                Neću glasati!: <span id="count-Nisam">0</span> glasova (<span id="percent-Nisam">0</span>%)
+                <div class="result-bar" id="bar-Nisam" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="facebook-share hidden" id="share-section">
+        <button onclick="shareOnFacebook()">Podijeli na Facebooku</button>
+    </div>
+
+    <script>
+        let votes = { Primorac: 0, Milanovic: 0, Nisam: 0 };
+
+        function vote(option) {
+            // Increment the vote
+            votes[option]++;
+
+            // Hide the voting buttons
+            document.getElementById('poll-vote').classList.add('hidden');
+
+            // Show the results
+            showResults();
+        }
+
+        function showResults() {
+            let totalVotes = votes.Primorac + votes.Milanovic + votes.Nisam;
+            let results = ['Primorac', 'Milanovic', 'Nisam'];
+
+            results.forEach(option => {
+                let count = votes[option];
+                let percent = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+
+                document.getElementById(`count-${option}`).textContent = count;
+                document.getElementById(`percent-${option}`).textContent = percent;
+
+                const bar = document.getElementById(`bar-${option}`);
+                bar.style.transition = 'width 0.5s ease';
+                bar.style.width = percent + '%';
+            });
+
+            document.getElementById('poll-result').classList.remove('hidden');
+            document.getElementById('share-section').classList.remove('hidden');
+        }
+
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            window.open(fbShareUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
